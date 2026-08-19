@@ -14,7 +14,296 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      alerts: {
+        Row: {
+          article_id: string | null
+          channels: string[]
+          created_at: string
+          id: string
+          is_read: boolean
+          match_reason: string | null
+          match_score: number | null
+          property_id: string | null
+          risk_level: string
+          user_id: string
+        }
+        Insert: {
+          article_id?: string | null
+          channels?: string[]
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          match_reason?: string | null
+          match_score?: number | null
+          property_id?: string | null
+          risk_level?: string
+          user_id: string
+        }
+        Update: {
+          article_id?: string | null
+          channels?: string[]
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          match_reason?: string | null
+          match_score?: number | null
+          property_id?: string | null
+          risk_level?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alerts_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "land_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alerts_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "monitored_properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      land_articles: {
+        Row: {
+          area_extent: string | null
+          confidence: number | null
+          court_info: string | null
+          created_at: string
+          dispute_type: string | null
+          district: string | null
+          id: string
+          important_dates: string[]
+          language: string | null
+          latitude: number | null
+          location: string | null
+          longitude: number | null
+          newspaper_id: string
+          newspaper_name: string | null
+          organizations: string[]
+          original_text: string | null
+          owner_names: string[]
+          persons: string[]
+          publication_date: string | null
+          risk_level: string
+          source_page: string | null
+          state: string | null
+          summary: string | null
+          survey_number: string | null
+          taluk: string | null
+          title: string | null
+          user_id: string
+          verification_status: string
+          village: string | null
+        }
+        Insert: {
+          area_extent?: string | null
+          confidence?: number | null
+          court_info?: string | null
+          created_at?: string
+          dispute_type?: string | null
+          district?: string | null
+          id?: string
+          important_dates?: string[]
+          language?: string | null
+          latitude?: number | null
+          location?: string | null
+          longitude?: number | null
+          newspaper_id: string
+          newspaper_name?: string | null
+          organizations?: string[]
+          original_text?: string | null
+          owner_names?: string[]
+          persons?: string[]
+          publication_date?: string | null
+          risk_level?: string
+          source_page?: string | null
+          state?: string | null
+          summary?: string | null
+          survey_number?: string | null
+          taluk?: string | null
+          title?: string | null
+          user_id: string
+          verification_status?: string
+          village?: string | null
+        }
+        Update: {
+          area_extent?: string | null
+          confidence?: number | null
+          court_info?: string | null
+          created_at?: string
+          dispute_type?: string | null
+          district?: string | null
+          id?: string
+          important_dates?: string[]
+          language?: string | null
+          latitude?: number | null
+          location?: string | null
+          longitude?: number | null
+          newspaper_id?: string
+          newspaper_name?: string | null
+          organizations?: string[]
+          original_text?: string | null
+          owner_names?: string[]
+          persons?: string[]
+          publication_date?: string | null
+          risk_level?: string
+          source_page?: string | null
+          state?: string | null
+          summary?: string | null
+          survey_number?: string | null
+          taluk?: string | null
+          title?: string | null
+          user_id?: string
+          verification_status?: string
+          village?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "land_articles_newspaper_id_fkey"
+            columns: ["newspaper_id"]
+            isOneToOne: false
+            referencedRelation: "newspapers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      monitored_properties: {
+        Row: {
+          area_extent: string | null
+          created_at: string
+          district: string | null
+          id: string
+          label: string | null
+          latitude: number | null
+          longitude: number | null
+          notify_email: boolean
+          notify_sms: boolean
+          notify_whatsapp: boolean
+          owner_name: string | null
+          state: string | null
+          survey_number: string | null
+          taluk: string | null
+          user_id: string
+          village: string | null
+        }
+        Insert: {
+          area_extent?: string | null
+          created_at?: string
+          district?: string | null
+          id?: string
+          label?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          notify_email?: boolean
+          notify_sms?: boolean
+          notify_whatsapp?: boolean
+          owner_name?: string | null
+          state?: string | null
+          survey_number?: string | null
+          taluk?: string | null
+          user_id: string
+          village?: string | null
+        }
+        Update: {
+          area_extent?: string | null
+          created_at?: string
+          district?: string | null
+          id?: string
+          label?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          notify_email?: boolean
+          notify_sms?: boolean
+          notify_whatsapp?: boolean
+          owner_name?: string | null
+          state?: string | null
+          survey_number?: string | null
+          taluk?: string | null
+          user_id?: string
+          village?: string | null
+        }
+        Relationships: []
+      }
+      newspapers: {
+        Row: {
+          articles_detected: number
+          created_at: string
+          error_message: string | null
+          file_name: string
+          id: string
+          language: string | null
+          mime_type: string | null
+          newspaper_name: string | null
+          ocr_text: string | null
+          page_count: number | null
+          publication_date: string | null
+          status: string
+          storage_path: string
+          user_id: string
+        }
+        Insert: {
+          articles_detected?: number
+          created_at?: string
+          error_message?: string | null
+          file_name: string
+          id?: string
+          language?: string | null
+          mime_type?: string | null
+          newspaper_name?: string | null
+          ocr_text?: string | null
+          page_count?: number | null
+          publication_date?: string | null
+          status?: string
+          storage_path: string
+          user_id: string
+        }
+        Update: {
+          articles_detected?: number
+          created_at?: string
+          error_message?: string | null
+          file_name?: string
+          id?: string
+          language?: string | null
+          mime_type?: string | null
+          newspaper_name?: string | null
+          ocr_text?: string | null
+          page_count?: number | null
+          publication_date?: string | null
+          status?: string
+          storage_path?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          phone?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
