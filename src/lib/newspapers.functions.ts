@@ -79,7 +79,7 @@ function toBase64(bytes: Uint8Array) {
   return btoa(binary);
 }
 
-type ExtractedArticle = Record<string, unknown>;
+type ExtractedArticle = any;
 
 function str(value: unknown) {
   const s = typeof value === "string" ? value.trim() : "";
