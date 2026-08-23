@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 });
 
 function LandingPage() {
-  const [authenticated, setAuthenticated] = useState<boolean | null>(null);
+  const [authenticated, setAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setAuthenticated(!!data.session));
@@ -41,7 +41,11 @@ function LandingPage() {
           <span className="font-display text-xl">BhoomiWatch</span>
         </Link>
         <div className="flex items-center gap-3">
-          {authenticated === false && (
+          {authenticated ? (
+            <Button asChild>
+              <Link to="/dashboard">Go to dashboard</Link>
+            </Button>
+          ) : (
             <>
               <Button variant="ghost" asChild>
                 <Link to="/auth">Sign in</Link>
@@ -50,11 +54,6 @@ function LandingPage() {
                 <Link to="/auth">Get started</Link>
               </Button>
             </>
-          )}
-          {authenticated === true && (
-            <Button asChild>
-              <Link to="/dashboard">Go to dashboard</Link>
-            </Button>
           )}
         </div>
       </header>
