@@ -93,7 +93,7 @@ function PropertiesPage() {
     setDialogOpen(true);
   };
 
-  const openEdit = (property: (typeof properties)[number]) => {
+  const openEdit = (property: NonNullable<typeof properties>[number]) => {
     setForm({
       label: property.label ?? "",
       survey_number: property.survey_number ?? "",
