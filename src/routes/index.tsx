@@ -148,7 +148,7 @@ function StepCard({ icon: Icon, title, description }: { icon: React.ElementType;
   return (
     <Card className="text-center">
       <CardContent className="px-6 py-8">
-        <div className="mx-flex mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
           <Icon className="size-6 text-primary" />
         </div>
         <h3 className="mt-4 font-display text-xl">{title}</h3>
