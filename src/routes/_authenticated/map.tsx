@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { Suspense, lazy } from "react";
 import { Map as MapIcon, MapPin, Newspaper } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { MapView } from "@/components/app/MapView";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+const MapView = lazy(() => import("@/components/app/MapView").then((m) => ({ default: m.MapView })));
 
 export const Route = createFileRoute("/_authenticated/map")({
   head: () => ({
