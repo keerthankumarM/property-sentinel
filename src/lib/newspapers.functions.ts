@@ -91,8 +91,13 @@ function arr(value: unknown): string[] {
 
 export const analyzeNewspaper = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => z.object({ newspaperId: z.string().uuid() }).parse(data))
+  .inputValidator((data: unknown) =>
+    z
+      .object({ newspaperId: z.string().uuid(), keywords: z.array(z.string()).optional() })
+      .parse(data),
+  )
   .handler(async ({ data, context }) => {
+    const keywords = (data.keywords ?? []).map((k) => k.trim()).filter(Boolean);
     const { supabase, userId } = context;
 
     const { data: paper, error: paperError } = await supabase
