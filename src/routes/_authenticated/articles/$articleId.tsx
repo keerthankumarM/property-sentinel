@@ -83,6 +83,24 @@ function ArticleDetailPage() {
         />
       </div>
 
+      {article.survey_number && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Box className="size-4 text-primary" /> 3D land view — Survey {article.survey_number}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Land3DView
+              surveyNumber={article.survey_number}
+              areaExtent={article.area_extent}
+              location={locationParts.join(" · ")}
+              riskLevel={article.risk_level}
+            />
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">English summary</CardTitle>
