@@ -140,7 +140,11 @@ export const analyzeNewspaper = createServerFn({ method: "POST" })
               content: [
                 {
                   type: "text",
-                  text: `Newspaper file: ${paper.file_name}. Known newspaper name: ${paper.newspaper_name ?? "unknown"}. Known publication date: ${paper.publication_date ?? "unknown"}. Extract all land/property related articles.`,
+                  text: `Newspaper file: ${paper.file_name}. Known newspaper name: ${paper.newspaper_name ?? "unknown"}. Known publication date: ${paper.publication_date ?? "unknown"}. Extract all land/property related articles.${
+                    keywords.length
+                      ? ` The user is specifically searching this newspaper for these keywords: ${keywords.join(", ")}. Search the whole document for these keywords (including regional-language equivalents and transliterations) and make sure every article mentioning them is reported first, even in passing.`
+                      : ""
+                  }`,
                 },
                 contentBlock,
               ],
