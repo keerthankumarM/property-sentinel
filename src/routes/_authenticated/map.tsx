@@ -89,7 +89,15 @@ function MapPage() {
               </p>
             </div>
           ) : (
-            <MapView articles={articles ?? []} properties={properties ?? []} />
+            <Suspense
+              fallback={
+                <div className="flex h-[600px] items-center justify-center rounded-xl border bg-muted">
+                  <p className="text-sm text-muted-foreground">Loading map…</p>
+                </div>
+              }
+            >
+              <MapView articles={articles ?? []} properties={properties ?? []} />
+            </Suspense>
           )}
         </CardContent>
       </Card>
