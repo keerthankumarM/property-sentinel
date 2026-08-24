@@ -224,7 +224,46 @@ export const analyzeNewspaper = createServerFn({ method: "POST" })
 
       const alerts = await matchAndAlert(supabase, userId, inserted);
 
-      return { articles: inserted.length, alerts };
+      const lowerKeywords = keywords.map((k) => k.toLowerCase());
+      const results = inserted.map((a) => {
+        const haystack = [
+          a.title,
+          a.summary,
+          a.original_text,
+          a.survey_number,
+          a.location,
+          a.village,
+          a.taluk,
+          a.district,
+          a.dispute_type,
+          ...(a.owner_names ?? []),
+          ...(a.persons ?? []),
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        return {
+          id: a.id as string,
+          title: a.title as string,
+          summary: (a.summary ?? null) as string | null,
+          risk_level: (a.risk_level ?? "LOW") as string,
+          dispute_type: (a.dispute_type ?? null) as string | null,
+          survey_number: (a.survey_number ?? null) as string | null,
+          village: (a.village ?? null) as string | null,
+          taluk: (a.taluk ?? null) as string | null,
+          district: (a.district ?? null) as string | null,
+          latitude: (a.latitude ?? null) as number | null,
+          longitude: (a.longitude ?? null) as number | null,
+          matchedKeywords: lowerKeywords.filter((k) => haystack.includes(k)),
+        };
+      });
+
+      return {
+        articles: inserted.length,
+        alerts: alerts.length,
+        alertMessages: alerts,
+        results,
+      };
     } catch (error) {
       const message = error instanceof Error ? error.message : "Processing failed";
       await supabase
