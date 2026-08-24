@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, MapPin, Calendar, FileText, User } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, FileText, User, Box } from "lucide-react";
+import { Land3DView } from "@/components/app/Land3DView";
 import { supabase } from "@/integrations/supabase/client";
 import { RiskBadge, VerificationBadge } from "@/components/app/RiskBadge";
 import { Button } from "@/components/ui/button";
