@@ -63,7 +63,7 @@ export function Land3DView({ surveyNumber, areaExtent, location, riskLevel }: Pr
             className="absolute -left-[220px] -top-[170px] h-[340px] w-[440px] rounded-md border border-border/70 opacity-70"
             style={{
               backgroundImage:
-                "linear-gradient(to right, hsl(var(--border)) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--border)) 1px, transparent 1px)",
+                "linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px)",
               backgroundSize: "28px 28px",
               transform: "translateZ(0px)",
             }}
