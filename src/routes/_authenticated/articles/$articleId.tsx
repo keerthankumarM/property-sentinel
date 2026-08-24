@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, MapPin, Calendar, FileText, User } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, FileText, User, Box } from "lucide-react";
+import { Land3DView } from "@/components/app/Land3DView";
 import { supabase } from "@/integrations/supabase/client";
 import { RiskBadge, VerificationBadge } from "@/components/app/RiskBadge";
 import { Button } from "@/components/ui/button";
@@ -82,6 +83,24 @@ function ArticleDetailPage() {
           value={VERIFICATION_LABELS[article.verification_status] ?? article.verification_status}
         />
       </div>
+
+      {article.survey_number && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Box className="size-4 text-primary" /> 3D land view — Survey {article.survey_number}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Land3DView
+              surveyNumber={article.survey_number}
+              areaExtent={article.area_extent}
+              location={locationParts.join(" · ")}
+              riskLevel={article.risk_level}
+            />
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>

@@ -91,8 +91,13 @@ function arr(value: unknown): string[] {
 
 export const analyzeNewspaper = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => z.object({ newspaperId: z.string().uuid() }).parse(data))
+  .inputValidator((data: unknown) =>
+    z
+      .object({ newspaperId: z.string().uuid(), keywords: z.array(z.string()).optional() })
+      .parse(data),
+  )
   .handler(async ({ data, context }) => {
+    const keywords = (data.keywords ?? []).map((k) => k.trim()).filter(Boolean);
     const { supabase, userId } = context;
 
     const { data: paper, error: paperError } = await supabase
@@ -135,7 +140,11 @@ export const analyzeNewspaper = createServerFn({ method: "POST" })
               content: [
                 {
                   type: "text",
-                  text: `Newspaper file: ${paper.file_name}. Known newspaper name: ${paper.newspaper_name ?? "unknown"}. Known publication date: ${paper.publication_date ?? "unknown"}. Extract all land/property related articles.`,
+                  text: `Newspaper file: ${paper.file_name}. Known newspaper name: ${paper.newspaper_name ?? "unknown"}. Known publication date: ${paper.publication_date ?? "unknown"}. Extract all land/property related articles.${
+                    keywords.length
+                      ? ` The user is specifically searching this newspaper for these keywords: ${keywords.join(", ")}. Search the whole document for these keywords (including regional-language equivalents and transliterations) and make sure every article mentioning them is reported first, even in passing.`
+                      : ""
+                  }`,
                 },
                 contentBlock,
               ],
@@ -215,7 +224,46 @@ export const analyzeNewspaper = createServerFn({ method: "POST" })
 
       const alerts = await matchAndAlert(supabase, userId, inserted);
 
-      return { articles: inserted.length, alerts };
+      const lowerKeywords = keywords.map((k) => k.toLowerCase());
+      const results = inserted.map((a) => {
+        const haystack = [
+          a.title,
+          a.summary,
+          a.original_text,
+          a.survey_number,
+          a.location,
+          a.village,
+          a.taluk,
+          a.district,
+          a.dispute_type,
+          ...(a.owner_names ?? []),
+          ...(a.persons ?? []),
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        return {
+          id: a.id as string,
+          title: a.title as string,
+          summary: (a.summary ?? null) as string | null,
+          risk_level: (a.risk_level ?? "LOW") as string,
+          dispute_type: (a.dispute_type ?? null) as string | null,
+          survey_number: (a.survey_number ?? null) as string | null,
+          village: (a.village ?? null) as string | null,
+          taluk: (a.taluk ?? null) as string | null,
+          district: (a.district ?? null) as string | null,
+          latitude: (a.latitude ?? null) as number | null,
+          longitude: (a.longitude ?? null) as number | null,
+          matchedKeywords: lowerKeywords.filter((k) => haystack.includes(k)),
+        };
+      });
+
+      return {
+        articles: inserted.length,
+        alerts: alerts.length,
+        alertMessages: alerts,
+        results,
+      };
     } catch (error) {
       const message = error instanceof Error ? error.message : "Processing failed";
       await supabase
@@ -226,15 +274,30 @@ export const analyzeNewspaper = createServerFn({ method: "POST" })
     }
   });
 
-async function matchAndAlert(supabase: any, userId: string, articles: any[]) {
-  if (!articles.length) return 0;
+type AlertMessage = {
+  articleId: string;
+  title: string;
+  propertyLabel: string;
+  reason: string;
+  riskLevel: string;
+  score: number;
+  channels: string[];
+};
+
+async function matchAndAlert(
+  supabase: any,
+  userId: string,
+  articles: any[],
+): Promise<AlertMessage[]> {
+  if (!articles.length) return [];
   const { data: properties } = await supabase
     .from("monitored_properties")
     .select("*")
     .eq("user_id", userId);
-  if (!properties?.length) return 0;
+  if (!properties?.length) return [];
 
   const alertRows: any[] = [];
+  const messages: AlertMessage[] = [];
   for (const property of properties) {
     for (const article of articles) {
       const reasons: string[] = [];
@@ -294,13 +357,23 @@ async function matchAndAlert(supabase: any, userId: string, articles: any[]) {
           risk_level: article.risk_level ?? "MEDIUM",
           channels,
         });
+        messages.push({
+          articleId: article.id,
+          title: article.title,
+          propertyLabel:
+            property.label || property.survey_number || [property.village, property.district].filter(Boolean).join(", ") || "Monitored property",
+          reason: reasons.join(" · "),
+          riskLevel: article.risk_level ?? "MEDIUM",
+          score: Math.min(score, 1),
+          channels,
+        });
       }
     }
   }
 
-  if (!alertRows.length) return 0;
+  if (!alertRows.length) return [];
   await supabase.from("alerts").insert(alertRows);
-  return alertRows.length;
+  return messages;
 }
 
 export const getArticleFileUrl = createServerFn({ method: "POST" })
