@@ -274,15 +274,30 @@ export const analyzeNewspaper = createServerFn({ method: "POST" })
     }
   });
 
-async function matchAndAlert(supabase: any, userId: string, articles: any[]) {
-  if (!articles.length) return 0;
+type AlertMessage = {
+  articleId: string;
+  title: string;
+  propertyLabel: string;
+  reason: string;
+  riskLevel: string;
+  score: number;
+  channels: string[];
+};
+
+async function matchAndAlert(
+  supabase: any,
+  userId: string,
+  articles: any[],
+): Promise<AlertMessage[]> {
+  if (!articles.length) return [];
   const { data: properties } = await supabase
     .from("monitored_properties")
     .select("*")
     .eq("user_id", userId);
-  if (!properties?.length) return 0;
+  if (!properties?.length) return [];
 
   const alertRows: any[] = [];
+  const messages: AlertMessage[] = [];
   for (const property of properties) {
     for (const article of articles) {
       const reasons: string[] = [];
@@ -342,13 +357,23 @@ async function matchAndAlert(supabase: any, userId: string, articles: any[]) {
           risk_level: article.risk_level ?? "MEDIUM",
           channels,
         });
+        messages.push({
+          articleId: article.id,
+          title: article.title,
+          propertyLabel:
+            property.label || property.survey_number || [property.village, property.district].filter(Boolean).join(", ") || "Monitored property",
+          reason: reasons.join(" · "),
+          riskLevel: article.risk_level ?? "MEDIUM",
+          score: Math.min(score, 1),
+          channels,
+        });
       }
     }
   }
 
-  if (!alertRows.length) return 0;
+  if (!alertRows.length) return [];
   await supabase.from("alerts").insert(alertRows);
-  return alertRows.length;
+  return messages;
 }
 
 export const getArticleFileUrl = createServerFn({ method: "POST" })
