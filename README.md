@@ -101,7 +101,7 @@ District
 Area/Extent of Land
 Dispute Type
 Court/Case Information
-Organizations Involved
+Organizations 
 Important Dates
 Source Page
 
