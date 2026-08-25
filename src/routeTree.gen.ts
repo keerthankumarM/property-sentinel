@@ -18,6 +18,7 @@ import { Route as AuthenticatedArticlesRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedMapRouteImport } from './routes/_authenticated/map'
 import { Route as AuthenticatedPropertiesRouteImport } from './routes/_authenticated/properties'
+import { Route as AuthenticatedRulesRouteImport } from './routes/_authenticated/rules'
 import { Route as AuthenticatedUploadRouteImport } from './routes/_authenticated/upload'
 import { Route as AuthenticatedArticlesArticleIdRouteImport } from './routes/_authenticated/articles/$articleId'
 
@@ -65,6 +66,11 @@ const AuthenticatedPropertiesRoute = AuthenticatedPropertiesRouteImport.update({
   path: '/properties',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedRulesRoute = AuthenticatedRulesRouteImport.update({
+  id: '/rules',
+  path: '/rules',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedUploadRoute = AuthenticatedUploadRouteImport.update({
   id: '/upload',
   path: '/upload',
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/map': typeof AuthenticatedMapRoute
   '/properties': typeof AuthenticatedPropertiesRoute
+  '/rules': typeof AuthenticatedRulesRoute
   '/upload': typeof AuthenticatedUploadRoute
   '/articles/$articleId': typeof AuthenticatedArticlesArticleIdRoute
 }
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/map': typeof AuthenticatedMapRoute
   '/properties': typeof AuthenticatedPropertiesRoute
+  '/rules': typeof AuthenticatedRulesRoute
   '/upload': typeof AuthenticatedUploadRoute
   '/articles/$articleId': typeof AuthenticatedArticlesArticleIdRoute
 }
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/map': typeof AuthenticatedMapRoute
   '/_authenticated/properties': typeof AuthenticatedPropertiesRoute
+  '/_authenticated/rules': typeof AuthenticatedRulesRoute
   '/_authenticated/upload': typeof AuthenticatedUploadRoute
   '/_authenticated/articles/$articleId': typeof AuthenticatedArticlesArticleIdRoute
 }
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/map'
     | '/properties'
+    | '/rules'
     | '/upload'
     | '/articles/$articleId'
   fileRoutesByTo: FileRoutesByTo
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/map'
     | '/properties'
+    | '/rules'
     | '/upload'
     | '/articles/$articleId'
   id:
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/map'
     | '/_authenticated/properties'
+    | '/_authenticated/rules'
     | '/_authenticated/upload'
     | '/_authenticated/articles/$articleId'
   fileRoutesById: FileRoutesById
@@ -227,6 +239,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPropertiesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/rules': {
+      id: '/_authenticated/rules'
+      path: '/rules'
+      fullPath: '/rules'
+      preLoaderRoute: typeof AuthenticatedRulesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/upload': {
       id: '/_authenticated/upload'
       path: '/upload'
@@ -263,6 +282,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedMapRoute: typeof AuthenticatedMapRoute
   AuthenticatedPropertiesRoute: typeof AuthenticatedPropertiesRoute
+  AuthenticatedRulesRoute: typeof AuthenticatedRulesRoute
   AuthenticatedUploadRoute: typeof AuthenticatedUploadRoute
 }
 
@@ -272,6 +292,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedMapRoute: AuthenticatedMapRoute,
   AuthenticatedPropertiesRoute: AuthenticatedPropertiesRoute,
+  AuthenticatedRulesRoute: AuthenticatedRulesRoute,
   AuthenticatedUploadRoute: AuthenticatedUploadRoute,
 }
 
