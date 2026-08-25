@@ -280,6 +280,66 @@ export type Database = {
         }
         Relationships: []
       }
+      policy_notices: {
+        Row: {
+          block: string | null
+          body: string | null
+          created_at: string
+          district: string | null
+          effective_date: string | null
+          id: string
+          is_published: boolean
+          issuing_authority: string | null
+          notice_type: string
+          reference_number: string | null
+          source_url: string | null
+          state: string
+          summary: string | null
+          tags: string[]
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          block?: string | null
+          body?: string | null
+          created_at?: string
+          district?: string | null
+          effective_date?: string | null
+          id?: string
+          is_published?: boolean
+          issuing_authority?: string | null
+          notice_type?: string
+          reference_number?: string | null
+          source_url?: string | null
+          state?: string
+          summary?: string | null
+          tags?: string[]
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          block?: string | null
+          body?: string | null
+          created_at?: string
+          district?: string | null
+          effective_date?: string | null
+          id?: string
+          is_published?: boolean
+          issuing_authority?: string | null
+          notice_type?: string
+          reference_number?: string | null
+          source_url?: string | null
+          state?: string
+          summary?: string | null
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
