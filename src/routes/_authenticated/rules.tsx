@@ -242,7 +242,7 @@ function RulesPage() {
                 </div>
                 <div>
                   <Label>District</Label>
-                  <Select value={form.district || undefined} onValueChange={(v) => set("district", v)}>
+                  <Select value={form.district} onValueChange={(v) => set("district", v)}>
                     <SelectTrigger><SelectValue placeholder="Select district" /></SelectTrigger>
                     <SelectContent>
                       {districtsFor(form.state).map((d) => (
