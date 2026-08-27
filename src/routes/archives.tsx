@@ -89,7 +89,7 @@ function ArchivesPage() {
           <Badge variant="secondary" className="gap-1">
             <ScrollText className="size-3" /> Jahernotice Blog
           </Badge>
-          <h1 className="font-display text-3xl md:text-4xl">Bihar Rules &amp; Policy Archives</h1>
+          <h1 className="font-display text-3xl md:text-4xl">&nbsp;Rules &amp; Policy Archives</h1>
           <p className="max-w-2xl text-muted-foreground">
             A searchable archive of land rules, policies, circulars, gazette notifications and Jahernotice
             public notices — organised by state and district. Always verify against the original
