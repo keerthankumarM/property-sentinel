@@ -40,7 +40,7 @@ export const Route = createFileRoute("/archives")({
 const ALL = "__all__";
 
 function ArchivesPage() {
-  const [state, setState] = useState<string>("Bihar");
+  const [state, setState] = useState<string>(ALL);
   const [district, setDistrict] = useState<string>(ALL);
   const [type, setType] = useState<string>(ALL);
   const [search, setSearch] = useState("");
@@ -142,12 +142,17 @@ function ArchivesPage() {
           </Select>
         </div>
 
-        <div className="mt-8 space-y-4">
+        <p className="mt-6 text-sm text-muted-foreground">
+          {isLoading ? "" : `${filtered.length} notice${filtered.length === 1 ? "" : "s"} found`}
+        </p>
+
+        <div className="mt-4 space-y-4">
           {isLoading && <p className="text-sm text-muted-foreground">Loading archive…</p>}
           {!isLoading && filtered.length === 0 && (
             <Card>
               <CardContent className="py-10 text-center text-sm text-muted-foreground">
-                No notices published for this state / district yet.
+                No notices match this search. Try clearing the filters, or publish the first notice for this
+                state and district.
               </CardContent>
             </Card>
           )}

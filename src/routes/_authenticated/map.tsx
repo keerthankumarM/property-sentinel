@@ -1,5 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Crosshair } from "lucide-react";
+import { geocodeMissing } from "@/lib/geo.functions";
+import { coordsFor } from "@/lib/geo";
 import { Suspense, lazy } from "react";
 import { Map as MapIcon, MapPin, Newspaper } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,6 +28,20 @@ export const Route = createFileRoute("/_authenticated/map")({
 });
 
 function MapPage() {
+  const queryClient = useQueryClient();
+  const runGeocode = useServerFn(geocodeMissing);
+  const geocode = useMutation({
+    mutationFn: () => runGeocode({}),
+    onSuccess: (res) => {
+      toast.success(
+        res.updated > 0 ? `Located ${res.updated} record(s) precisely.` : "No new precise locations found.",
+      );
+      queryClient.invalidateQueries({ queryKey: ["land_articles"] });
+      queryClient.invalidateQueries({ queryKey: ["monitored_properties"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   const { data: articles } = useQuery({
     queryKey: ["land_articles"],
     queryFn: async () => {
@@ -40,16 +60,26 @@ function MapPage() {
     },
   });
 
-  const locatedArticles = (articles ?? []).filter((a) => a.latitude != null && a.longitude != null);
-  const locatedProperties = (properties ?? []).filter((p) => p.latitude != null && p.longitude != null);
+  const locatedArticles = (articles ?? []).filter((a) => coordsFor(a) !== null);
+  const locatedProperties = (properties ?? []).filter((p) => coordsFor(p) !== null);
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <header>
         <h1 className="text-3xl">Map view</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Geographic view of your monitored properties and detected dispute articles.
+          Geographic view of your monitored properties and detected dispute articles. Records without exact
+          coordinates are shown at their state location until refined.
         </p>
+        <Button
+          className="mt-4"
+          variant="outline"
+          onClick={() => geocode.mutate()}
+          disabled={geocode.isPending}
+        >
+          <Crosshair className="mr-2 size-4" />
+          {geocode.isPending ? "Locating…" : "Refine locations"}
+        </Button>
       </header>
 
       <div className="grid gap-4 md:grid-cols-4">
@@ -84,8 +114,8 @@ function MapPage() {
             <div className="flex h-[300px] flex-col items-center justify-center rounded-xl border border-dashed">
               <MapIcon className="size-8 text-muted-foreground" />
               <p className="mt-3 max-w-md px-6 text-center text-sm text-muted-foreground">
-                No coordinates found yet. Add latitude and longitude to your properties, or upload articles that mention
-                specific locations.
+                Nothing to place on the map yet. Upload a newspaper or add a monitored property with a state,
+                district or village.
               </p>
             </div>
           ) : (
