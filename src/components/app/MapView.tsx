@@ -5,6 +5,7 @@ import "leaflet/dist/leaflet.css";
 import { Link } from "@tanstack/react-router";
 import { RiskBadge } from "./RiskBadge";
 import type { Tables } from "@/integrations/supabase/types";
+import { coordsFor, isApproximate, INDIA_CENTER } from "@/lib/geo";
 
 type Article = Tables<"land_articles">;
 type Property = Tables<"monitored_properties">;
@@ -30,13 +31,15 @@ export function MapView({ articles, properties }: { articles: Article[]; propert
     setMounted(true);
   }, []);
 
-  const locatedArticles = articles.filter((a) => a.latitude != null && a.longitude != null);
-  const locatedProperties = properties.filter((p) => p.latitude != null && p.longitude != null);
+  const locatedArticles = articles
+    .map((a) => ({ item: a, pos: coordsFor(a) }))
+    .filter((x): x is { item: Article; pos: [number, number] } => x.pos !== null);
+  const locatedProperties = properties
+    .map((p) => ({ item: p, pos: coordsFor(p) }))
+    .filter((x): x is { item: Property; pos: [number, number] } => x.pos !== null);
 
   const center: LatLngExpression =
-    locatedArticles[0] || locatedProperties[0]
-      ? [locatedArticles[0]?.latitude ?? locatedProperties[0]?.latitude!, locatedArticles[0]?.longitude ?? locatedProperties[0]?.longitude!]
-      : [20.5937, 78.9629]; // India center
+    locatedArticles[0]?.pos ?? locatedProperties[0]?.pos ?? INDIA_CENTER;
 
   if (!mounted) {
     return (
@@ -52,26 +55,28 @@ export function MapView({ articles, properties }: { articles: Article[]; propert
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {locatedProperties.map((p) => (
-        <Marker key={`p-${p.id}`} position={[p.latitude!, p.longitude!]} icon={propertyIcon}>
+      {locatedProperties.map(({ item: p, pos }) => (
+        <Marker key={`p-${p.id}`} position={pos} icon={propertyIcon}>
           <Popup>
             <div className="space-y-1 min-w-[180px]">
               <p className="font-medium">{p.label || p.survey_number || "Monitored property"}</p>
               <p className="text-xs text-muted-foreground">
                 {[p.village, p.taluk, p.district].filter(Boolean).join(" · ")}
+                {isApproximate(p) ? " · approximate (state level)" : ""}
               </p>
             </div>
           </Popup>
         </Marker>
       ))}
-      {locatedArticles.map((a) => (
-        <Marker key={`a-${a.id}`} position={[a.latitude!, a.longitude!]} icon={articleIcon}>
+      {locatedArticles.map(({ item: a, pos }) => (
+        <Marker key={`a-${a.id}`} position={pos} icon={articleIcon}>
           <Popup>
             <div className="space-y-1 min-w-[220px]">
               <p className="font-medium leading-tight">{a.title}</p>
               <RiskBadge risk={a.risk_level} />
               <p className="text-xs text-muted-foreground">
                 {[a.village, a.taluk, a.district].filter(Boolean).join(" · ")}
+                {isApproximate(a) ? " · approximate (state level)" : ""}
               </p>
               <Link
                 to="/articles/$articleId"
