@@ -43,7 +43,8 @@ export function coordsFor(item: Located): [number, number] | null {
   if (item.latitude != null && item.longitude != null) {
     return [Number(item.latitude), Number(item.longitude)];
   }
-  if (item.state && STATE_CENTROIDS[item.state]) return STATE_CENTROIDS[item.state];
+  const centroid = item.state ? STATE_CENTROIDS[item.state] : undefined;
+  if (centroid) return centroid;
   return null;
 }
 
