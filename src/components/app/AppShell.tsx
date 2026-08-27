@@ -8,6 +8,7 @@ import {
   Landmark,
   LogOut,
   Map,
+  ScrollText,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,6 +21,7 @@ const NAV = [
   { to: "/properties", label: "Monitored properties", icon: MapPin },
   { to: "/alerts", label: "Alerts", icon: Bell },
   { to: "/map", label: "Map view", icon: Map },
+  { to: "/rules", label: "Rules & archives", icon: ScrollText },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {

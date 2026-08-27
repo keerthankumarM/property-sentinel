@@ -41,6 +41,9 @@ function LandingPage() {
           <span className="font-display text-xl">BhoomiWatch</span>
         </Link>
         <div className="flex items-center gap-3">
+          <Button variant="ghost" asChild>
+            <Link to="/archives">Archives</Link>
+          </Button>
           {authenticated ? (
             <Button asChild>
               <Link to="/dashboard">Go to dashboard</Link>
