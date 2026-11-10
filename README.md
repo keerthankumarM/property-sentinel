@@ -1,4 +1,4 @@
-# Land watcher
+# Land watcher.
 
 Project Prompt
 
